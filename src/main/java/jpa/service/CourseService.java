@@ -22,9 +22,9 @@ public class CourseService implements CourseDAO {
         List<Course> executedList = null;
 
         try {
-            entityManager.getTransaction().begin();
+            //entityManager.getTransaction().begin();
             executedList = entityManager.createQuery("select c from Course c", Course.class).getResultList();
-            entityManager.getTransaction().commit();
+            //entityManager.getTransaction().commit();
         } catch (NoResultException e) {
             out.println("No courses were found");
             e.printStackTrace();

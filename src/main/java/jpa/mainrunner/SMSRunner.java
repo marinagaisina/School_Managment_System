@@ -3,6 +3,7 @@ package jpa.mainrunner;
         import static java.lang.System.in;
         import static java.lang.System.out;
 
+        import java.util.InputMismatchException;
         import java.util.List;
         import java.util.Scanner;
         import jpa.entitymodels.Course;
@@ -69,17 +70,26 @@ public class SMSRunner {
                 }
                 break;
             case 2:
+            default:
                 out.println("Goodbye!");
                 break;
         }
     }
 
     private int menu1() {
+        int input = 0;
         sb.append("\n1.Student Login\n2. Quit Application\nPlease Enter Selection: ");
         out.print(sb.toString());
         sb.delete(0, sb.length());
-
-        return sin.nextInt();
+        try {
+            input = sin.nextInt();
+        } catch (NumberFormatException e) {
+            out.println("Wrong input! Input only integer numbers please: ");
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return input;
     }
 
     private boolean studentLogin() {
@@ -94,8 +104,6 @@ public class SMSRunner {
             return false;
         } else {
             currentStudent = studentService.getStudentByEmail(email);
-            out.println("MyClasses: ");
-            displayCourses(studentService.getStudentCourses(currentStudent.getsEmail()));
         }
         //out.println("Logged in successfully.");
         return true;
@@ -104,6 +112,8 @@ public class SMSRunner {
     private void registerMenu() {
         boolean quit = false;
         while (!quit) {
+            out.println("MyClasses: ");
+            displayCourses(studentService.getStudentCourses(currentStudent.getsEmail()));
             sb.append("\n1.Register a class\n2. Logout\nPlease Enter Selection: ");
             out.print(sb.toString());
             sb.delete(0, sb.length());

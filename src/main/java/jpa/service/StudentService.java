@@ -3,6 +3,7 @@ package jpa.service;
 import jpa.dao.StudentDAO;
 import jpa.entitymodels.Course;
 import jpa.entitymodels.Student;
+import org.junit.Test;
 
 import javax.persistence.*;
 import java.util.Collections;
@@ -78,7 +79,7 @@ public class StudentService implements StudentDAO {
         }
         return isValid;
     }
-
+    @Test
     @Override
     public void registerStudentToCourse(String sEmail, int cId) {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("SMSPersistenceUnit");
@@ -89,13 +90,22 @@ public class StudentService implements StudentDAO {
             entityManager.getTransaction().begin();
             student = entityManager.find(Student.class, sEmail);
             course = entityManager.find(Course.class, cId);
-            Query query = entityManager.createNativeQuery("select sc.* from student_course sc where sc.student_email=:sEmail and sc.course_id=:id")
+            Query query = entityManager.createNativeQuery("select count(sc.student_email) from student_course sc where sc.student_email=:sEmail and sc.course_id=:id")
                     .setParameter("sEmail", sEmail).setParameter("id", cId);
-            student = (Student) query.getSingleResult();
-            } catch (NoResultException e) {
+            Object rows = (Object) query.getSingleResult();
+            if (String.valueOf(rows) == "0") {
                 student.addCourse(course);
                 entityManager.getTransaction().commit();
                 System.out.println("You have successfully registered to " + course.getcName() + " course.");
+            } else {
+                System.out.println(student.getsName() + " is already registered for "+course.getcName()+" course");
+            }
+
+            } catch (NoResultException e) {
+                e.printStackTrace();
+            } catch (EntityNotFoundException e) {
+                System.out.println("wrong " + sEmail + " and/or course id");
+                e.printStackTrace();
             } catch (Exception e) {
                 if (entityManager.getTransaction() !=null) {
                     entityManager.getTransaction().rollback();

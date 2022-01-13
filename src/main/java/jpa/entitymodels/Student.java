@@ -2,7 +2,12 @@ package jpa.entitymodels;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "student")
@@ -25,14 +30,18 @@ public class Student {
     )
     private List<Course> sCourses;
 
-    public Student(String sEmail, String sName, String sPass, List<Course> sCourses) {
+    public Student(String sEmail, String sName, String sPass) {
         this.sEmail = sEmail;
         this.sName = sName;
         this.sPass = sPass;
-        this.sCourses = sCourses;
+        this.sCourses = new ArrayList<>();
     }
 
     public Student() {
+        this.sEmail ="";
+        this.sName = "";
+        this.sPass = "";
+        this.sCourses = new ArrayList<>();
     }
 
     public void addCourse(Course course) {
@@ -76,10 +85,25 @@ public class Student {
     @Override
     public String toString() {
         return "Student{" +
-                "sEmail='" + sEmail + '\'' +
-                ", sName='" + sName + '\'' +
-                ", sPass='" + sPass + '\'' +
-                //", sCourses=" + sCourses +//movies.stream().map(Movie::getTitle).collect(Collectors.toList()) + '\''
+                "Email='" + sEmail + '\'' +
+                ", Name='" + sName + '\'' +
+                ", Pass='" + sPass + '\'' +
+                ", Courses: " + Arrays.toString(sCourses.toArray()) + '\''+
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Student)) return false;
+        Student student = (Student) o;
+        return getsEmail().equals(student.getsEmail())
+                && getsName().equals(student.getsName())
+                && getsPass().equals(student.getsPass());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getsEmail(), getsName(), getsPass());
     }
 }

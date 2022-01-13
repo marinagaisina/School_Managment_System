@@ -59,6 +59,9 @@ public class SMSRunner {
         Query query = entityManager.createQuery("select s from Student s where s.sEmail=:sEmail and s.sPass=:sPassword", Student.class).setParameter("sEmail", sEmail).setParameter("sPassword", sPassword);
         out.println(query.getSingleResult());
         sms.run();
+
+        entityManagerFactory.close();
+        entityManager.close();
     }
 
     private void run() {
@@ -117,38 +120,36 @@ public class SMSRunner {
             sb.append("\n1.Register a class\n2. Logout\nPlease Enter Selection: ");
             out.print(sb.toString());
             sb.delete(0, sb.length());
-            switch (sin.nextInt()) {
-                case 1:
-                    out.println("All courses: ");
-                    displayCourses(courseService.getAllCourses());
-                    out.print("\nEnter Course Number: ");
-                    String line = sin.next();
-                    Course newCourse = null;
-                    int number = 0;
-                    try {
-                        number = Integer.parseInt(line);
-                        newCourse = courseService.getCourseById(number);
-                    } catch (NumberFormatException e) {
-                        out.println("Wrong input! Input only integer numbers please: ");
-                        e.printStackTrace();
-                    } catch (NoResultException e) {
-                        e.printStackTrace();
-                    }
-                    if (newCourse != null) {
-                        studentService.registerStudentToCourse(currentStudent.getsEmail(), number);
-                    }
-                    break;
-                case 2:
-                    quit = true;
-                    out.println("Goodbye!");
-                    break;
+            try {
+                int intOption = Integer.parseInt(sin.next());
+                switch (intOption) {
+                    case 1:
+                        out.println("All courses: ");
+                        displayCourses(courseService.getAllCourses());
+                        out.print("\nEnter Course Number: ");
+                        int number = Integer.parseInt(sin.next());
+                        Course newCourse = courseService.getCourseById(number);
+                        if (newCourse != null) {
+                            studentService.registerStudentToCourse(currentStudent.getsEmail(), number);
+                        }
+                        break;
+                    case 2:
+                        quit = true;
+                        out.println("Goodbye!");
+                        break;
+                }
+            } catch (NumberFormatException e) {
+            out.println("Wrong input! Input only integer numbers please: ");
+            e.printStackTrace();
+            } catch (NoResultException e) {
+                e.printStackTrace();
             }
         }
     }
     public static void displayCourses (List < Course > list) {
         if (list != null) {
             for (Course course : list) {
-                out.printf("%5s%20S%20s\n", course.getcId(), course.getcName(), course.getcInstructorName());
+                out.printf("%5s%30S%20s\n", course.getcId(), course.getcName(), course.getcInstructorName());
             }
         } else out.println("No courses found");
     }

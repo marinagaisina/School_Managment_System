@@ -100,7 +100,6 @@ public class StudentService implements StudentDAO {
             } else {
                 System.out.println(student.getsName() + " is already registered for "+course.getcName()+" course");
             }
-
             } catch (NoResultException e) {
                 e.printStackTrace();
             } catch (EntityNotFoundException e) {

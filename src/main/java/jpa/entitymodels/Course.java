@@ -2,7 +2,9 @@ package jpa.entitymodels;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name="course")
@@ -29,33 +31,40 @@ public class Course {
     @Override
     public String toString() {
         return "Course {" +
-                "cId=" + cId +
-                ", cName='" + cName + '\'' +
-                ", cInstructorName='" + cInstructorName + '\'' +
-                //", students=" + students +//movies.stream().map(Movie::getTitle).collect(Collectors.toList()) + '\''
+                "Id=" + cId +
+                ", Name='" + cName + '\'' +
+                ", InstructorName='" + cInstructorName + '\'' +
+                //", Students: " + Arrays.toString(students.toArray()) + '\''+
                 '}';
     }
 
-    public Course(String cName, String cInstructorName) {
+    public Course(Integer cId, String cName, String cInstructorName) {
+        this.cId = cId;
         this.cName = cName;
         this.cInstructorName = cInstructorName;
+        this.students = new ArrayList<>();
     }
 
     public Course() {
+        this.cId = 0;
+        this.cName = "";
+        this.cInstructorName = "";
+        this.students = new ArrayList<>();
     }
 
-    public void addStudent(Student student) {
-        if (students == null) {
-            students = new ArrayList<>();
-        }
-        students.add(student);
+    public String getcInstructorName() {
+        return cInstructorName;
     }
 
-    public void setCourses(List<Student> students) {
+    public void setcInstructorName(String cInstructorName) {
+        this.cInstructorName = cInstructorName;
+    }
+
+    public void setStudents(List<Student> students) {
         this.students = students;
     }
 
-    public List<Student> getCourses() {
+    public List<Student> getStudents() {
         return students;
     }
 
@@ -71,15 +80,22 @@ public class Course {
         return cName;
     }
 
-    public String getcInstructorName() {
-        return cInstructorName;
-    }
-
     public void setcName(String cName) {
         this.cName = cName;
     }
 
-    public void setcInstructorName(String cInstructorName) {
-        this.cInstructorName = cInstructorName;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Course)) return false;
+        Course course = (Course) o;
+        return getcName().equals(course.getcName())
+                && getcInstructorName().equals(course.getcInstructorName())
+                && getcId() == course.getcId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getcId(), getcName(), getcInstructorName());
     }
 }

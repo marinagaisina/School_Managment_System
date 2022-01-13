@@ -74,9 +74,9 @@ public class SMSRunner {
                 break;
             case 2:
             default:
-                out.println("Goodbye!");
                 break;
         }
+        out.println("Goodbye!");
     }
 
     private int menu1() {
@@ -131,11 +131,11 @@ public class SMSRunner {
                         Course newCourse = courseService.getCourseById(number);
                         if (newCourse != null) {
                             studentService.registerStudentToCourse(currentStudent.getsEmail(), number);
+                            quit = true;    //if we comment this out: the program won't stop after registration. It will ask for getting registered for another course or logout. I like this flow more, but the requirement asks to logout user after registration
                         }
                         break;
                     case 2:
                         quit = true;
-                        out.println("Goodbye!");
                         break;
                 }
             } catch (NumberFormatException e) {
@@ -145,13 +145,14 @@ public class SMSRunner {
                 e.printStackTrace();
             }
         }
+        //out.println("Goodbye!");
     }
     public static void displayCourses (List < Course > list) {
         if (list != null) {
             for (Course course : list) {
                 out.printf("%5s%30S%20s\n", course.getcId(), course.getcName(), course.getcInstructorName());
             }
-        } else out.println("No courses found");
+        } else out.println("No assigned courses found");
     }
 }
 
